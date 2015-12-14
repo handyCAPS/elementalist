@@ -34,7 +34,7 @@ class HTMLElementTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($this->validElString, $this->validEl->getNodeType());
     }
 
-    public function testHasErrors()
+    public function testReturnsErrors()
     {
 
         $this->assertFalse($this->validEl->hasErrors());
@@ -42,13 +42,34 @@ class HTMLElementTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(array(), $this->validEl->getErrors());
 
         $this->assertTrue($this->inValidEl->hasErrors());
+
+        $this->assertNotEmpty($this->inValidEl->getErrors());
     }
 
-    public function testIsValidElement()
+    public function testOnlyAcceptsValidElements()
     {
         $this->assertTrue($this->validEl->isValidElement());
 
         $this->assertFalse($this->inValidEl->isValidElement());
+    }
+
+    public function testOnlyAcceptsValidAttributes()
+    {
+        $this->validEl->setAttribute('class', 'classOne');
+
+        $this->assertFalse($this->validEl->hasErrors());
+
+        $this->validEl->setAttribute('blanket', '');
+
+        $this->assertTrue($this->validEl->hasErrors());
+
+    }
+
+    public function testCanSetVariousAttributes()
+    {
+        $this->validEl->setAttribute('class', array('classOne'));
+
+        $this->assertEquals(array('class' => array('classOne')), $this->validEl->getAttributes());
     }
 
     public function testReturnsAProperlyFormattedNode()
@@ -82,27 +103,23 @@ class HTMLElementTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($content, $this->validEl->getContent());
     }
 
-    public function testCanSetVariousAttributes()
-    {
-        $this->validEl->setAttribute('class', array('classOne'));
-
-        $this->assertEquals(array('class' => array('classOne')), $this->validEl->getAttributes());
-    }
-
     public function testReturnsFalseWhitoutContent()
     {
         $this->assertFalse($this->validEl->getNode());
     }
 
-    public function testOnlyAcceptsValidAttributes()
+    public function testShouldBeAbleToSetArrayOfDataAttributes()
     {
-        $this->validEl->setAttribute('class', 'classOne');
 
-        $this->assertFalse($this->validEl->hasErrors());
+        $content = 'This is some content';
 
-        $this->validEl->setAttribute('blanket', '');
+        $expected = "<div data-test='testValue' data-testTwo='testValueTwo'>$content</div>";
 
-        $this->assertTrue($this->validEl->hasErrors());
+        $this->validEl->setContent($content);
+
+        $this->validEl->setAttribute('data', ['test' => 'testValue', 'testTwo' => 'testValueTwo']);
+
+        $this->assertEquals($expected, $this->validEl->getNode());
 
     }
 

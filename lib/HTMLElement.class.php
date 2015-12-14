@@ -17,6 +17,8 @@ class HTMLElement
 
     private $_attributes = array();
 
+    private $_dataAttributes = array();
+
     private $errors = array();
 
 
@@ -84,6 +86,19 @@ class HTMLElement
         return !$this->hasErrors();
     }
 
+    private function checkForData($attribute)
+    {
+        $res = false;
+
+        foreach ($this->prefixedAttributes as $prefix) {
+            if (strpos($attribute, $prefix . '-') === 0) {
+                $res = true;
+            }
+        }
+
+        return $res;
+    }
+
     /**
      * @codeCoverageIgnore
      */
@@ -117,10 +132,8 @@ class HTMLElement
 
     private function isValidAttribute($attribute)
     {
-        foreach ($this->prefixedAttributes as $prefix) {
-            if (strpos($attribute, $prefix . '-') === 0) {
-                return true;
-            }
+        if ($this->checkForData($attribute)) {
+            return true;
         }
         if (!in_array($attribute, $this->globalAttributes) && !in_array($attribute, $this->validAttributes[$this->_nodeType])) {
             $this->setError('Invalid attribute ' . $attribute . '.');
@@ -132,17 +145,28 @@ class HTMLElement
 
     public function setAttribute($attribute, $values = array())
     {
+        $allAttributes = array();
+
         if (is_array($attribute)) {
             foreach ($attribute as $att => $vals) {
-                if ($this->isValidAttribute($att)) {
-                    $this->_attributes[$att] = $vals;
-                }
+                    $allAttributes[$att] = $vals;
             }
         } else {
-            if ($this->isValidAttribute($attribute)) {
-                $this->_attributes[$attribute] = $values;
-            }
+            $allAttributes[$attribute] = $values;
         }
+
+        foreach ($allAttributes as $att => $vls) {
+
+            if ($att === 'data') {
+                $this->_dataAttributes[] = $vls;
+            } else {
+                if ($this->isValidAttribute($att)) {
+                    $this->_attributes[$att] = $vls;
+                }
+            }
+
+        }
+
     }
 
     public function getAttributes()
@@ -160,8 +184,23 @@ class HTMLElement
         return $this->_content;
     }
 
+    private function mergeDataAttributes()
+    {
+        $dataAtts = array();
+
+        foreach ($this->_dataAttributes as $key => $data) {
+            foreach ($data as $type => $value) {
+                $dataAtts['data-' . $type] = $value;
+            }
+        }
+
+        $this->_attributes = array_merge($this->_attributes, $dataAtts);
+    }
+
     private function buildNodeOpen()
     {
+        $this->mergeDataAttributes();
+
         $nodeOpen = "<" . $this->_nodeType;
 
         $attributes = '';
