@@ -17,6 +17,8 @@ $Element = new \lib\HTMLElement('input');
 
 $Element->setContent('This is some content');
 
+$Element->setInputType('number');
+
 $Element->setAttribute(['class' => 'classOne','data' => ['test' => 'testValue']]);
 
 $ma = $Element->getNode();

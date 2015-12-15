@@ -29,9 +29,15 @@ class HTMLElementTest extends PHPUnit_Framework_TestCase
         unset($this->inValidEl);
     }
 
-    public function testReturnsNodeTypeSetInConstructor()
+    public function testReturnsNodeTypeSetInConstructorOrWithMethod()
     {
         $this->assertEquals($this->validElString, $this->validEl->getNodeType());
+
+        $el = new \lib\HTMLElement();
+
+        $el->setNodeType('input');
+
+        $this->assertEquals('input', $el->getNodeType());
     }
 
     public function testReturnsErrors()
@@ -51,6 +57,12 @@ class HTMLElementTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->validEl->isValidElement());
 
         $this->assertFalse($this->inValidEl->isValidElement());
+
+        $invalEl = new \lib\HTMLElement();
+
+        $invalEl->setNodeType($this->inValidElString);
+
+        $this->assertFalse($invalEl->isValidElement());
     }
 
     public function testOnlyAcceptsValidAttributes()
@@ -83,13 +95,17 @@ class HTMLElementTest extends PHPUnit_Framework_TestCase
 
     public function testOnlyAcceptsAttributesBelongingToInput()
     {
-        $el = new \lib\HTMLElement('input');
+        $el = new \lib\HTMLElement();
+
+        $el->setNodeType('input');
 
         $el->setInputType('number');
 
+        $el->setAttribute('id', 'idOne');
+
         $el->setAttribute('min', 0);
 
-        $expected = "<input type='number' min='0'>";
+        $expected = "<input type='number' id='idOne' min='0'>";
 
         $this->assertEquals($expected, $el->getNode(), implode(',',$el->getErrors()));
     }

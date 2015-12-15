@@ -28,25 +28,27 @@ class HTMLElement
     private $isSelfClosing = false;
 
 
-    private $validElements = array();
+    private $validElements;
 
-    private $validAttributes = array();
+    private $validAttributes;
 
-    private $globalAttributes = array();
+    private $globalAttributes;
 
-    private $inputTypes = array();
+    private $inputTypes;
 
-    private $selfClosingTags = array();
+    private $selfClosingTags;
 
 
-    public function __construct($nodeType)
+    public function __construct($nodeType = null)
     {
 
         $this->setUp();
 
-        $this->setNodeType($nodeType);
+        if (!is_null($nodeType)) {
+            $this->setNodeType($nodeType);
+            $this->isValidElement();
+        }
 
-        $this->isValidElement();
     }
 
     private function setError($error)
@@ -109,7 +111,7 @@ class HTMLElement
         echo '</pre>';
     }
 
-    private function setNodeType($type)
+    public function setNodeType($type)
     {
         $this->_nodeType = $type;
 
@@ -164,7 +166,17 @@ class HTMLElement
     private function isValidInputAttribute($attribute)
     {
 
-        return in_array($attribute, $this->inputTypes[$this->_inputType]['attributes']);
+        $res = false;
+
+        if (in_array($attribute, $this->inputTypes[$this->_inputType]['attributes'])) {
+            $res = true;
+        }
+
+        if (in_array($attribute, $this->globalAttributes)) {
+            $res = true;
+        }
+
+        return $res;
 
     }
 
