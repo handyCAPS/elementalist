@@ -3,13 +3,13 @@
 function class_autoloader($className)
 {
 
+    $fileName = 'lib/' . str_replace('lib\\', '', $className) . '.class.php';
+
     require_once 'vendor/autoload.php';
 
-    file_put_contents('../test.txt', 'AAAAAAAAAAAAAAAWOOOO');
+    if (is_file($fileName)) {
 
-    if (strpos($className, 'lib\\') !== false) {
-
-        require_once 'lib/' . str_replace('lib\\', '', $className) . '.class.php';
+        require_once $fileName;
     }
 
 }

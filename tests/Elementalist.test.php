@@ -65,6 +65,15 @@ class HTMLElementTest extends PHPUnit_Framework_TestCase
 
     }
 
+    public function testOnlyAcceptsValidInputTypes()
+    {
+        $el = new \lib\HTMLElement('input');
+
+        $el->setInputType('blanket');
+
+        $this->assertTrue($el->hasErrors());
+    }
+
     public function testCanSetVariousAttributes()
     {
         $this->validEl->setAttribute('class', array('classOne'));
@@ -72,16 +81,29 @@ class HTMLElementTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(array('class' => array('classOne')), $this->validEl->getAttributes());
     }
 
+    public function testOnlyAcceptsAttributesBelongingToInput()
+    {
+        $el = new \lib\HTMLElement('input');
+
+        $el->setInputType('number');
+
+        $el->setAttribute('min', 0);
+
+        $expected = "<input type='number' min='0'>";
+
+        $this->assertEquals($expected, $el->getNode(), implode(',',$el->getErrors()));
+    }
+
     public function testCanSetArrayOfDataAttributes()
     {
 
         $content = 'This is some content';
 
-        $expected = "<div data-test='testValue' data-testTwo='testValueTwo'>$content</div>";
+        $expected = "<div data-test='testValue testValueArray' data-testTwo='testValueTwo'>$content</div>";
 
         $this->validEl->setContent($content);
 
-        $this->validEl->setAttribute('data', ['test' => 'testValue', 'testTwo' => 'testValueTwo']);
+        $this->validEl->setAttribute('data', ['test' => ['testValue', 'testValueArray'], 'testTwo' => 'testValueTwo']);
 
         $this->assertEquals($expected, $this->validEl->getNode());
 
@@ -96,9 +118,22 @@ class HTMLElementTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($content, $this->validEl->getContent());
     }
 
-    public function testReturnsFalseWhitoutContent()
+    public function testHasNoContentForSelfClosingTags()
+    {
+        $el = new \lib\HTMLElement('input');
+
+        $el->setContent('This is some content');
+
+        $this->assertEmpty($el->getContent());
+    }
+
+    public function testReturnsFalseWithoutContentWhenNeeded()
     {
         $this->assertFalse($this->validEl->getNode());
+
+        $el = new \lib\HTMLElement('br');
+
+        $this->assertTrue($el->getNode() !== false);
     }
 
     public function testReturnsAProperlyFormattedNode()
@@ -121,6 +156,10 @@ class HTMLElementTest extends PHPUnit_Framework_TestCase
                 ));
 
         $this->assertEquals($expected, $el->getNode());
+
+        $br = new \lib\HTMLElement('br');
+
+        $this->assertEquals("<br>", $br->getNode());
     }
 
 }
