@@ -30,10 +30,6 @@ class HTMLElement
 
     private $inputTypes = array();
 
-    private $prefixedAttributes = array(
-            'data',
-            'aria'
-        );
 
     public function __construct($nodeType)
     {
@@ -90,13 +86,9 @@ class HTMLElement
     {
         $res = false;
 
-        foreach ($this->prefixedAttributes as $prefix) {
-            if (strpos($attribute, $prefix . '-') === 0) {
-                $res = true;
-            }
-        }
+        $prefix = 'data';
 
-        return $res;
+        return $attribute === $prefix || strpos($attribute, $prefix . '-') === 0;
     }
 
     /**
@@ -132,15 +124,22 @@ class HTMLElement
 
     private function isValidAttribute($attribute)
     {
+        $res = false;
+
         if ($this->checkForData($attribute)) {
-            return true;
-        }
-        if (!in_array($attribute, $this->globalAttributes) && !in_array($attribute, $this->validAttributes[$this->_nodeType])) {
-            $this->setError('Invalid attribute ' . $attribute . '.');
-            return false;
+            $res = true;
         } else {
-            return true;
+            if (!in_array($attribute, $this->globalAttributes) && !in_array($attribute, $this->validAttributes[$this->_nodeType])) {
+
+                $this->setError('Invalid attribute ' . $attribute . ' for node type ' . $this->_nodeType . '.');
+                $res = false;
+
+            } else {
+                $res = true;
+            }
         }
+
+        return $res;
     }
 
     public function setAttribute($attribute, $values = array())
@@ -157,12 +156,20 @@ class HTMLElement
 
         foreach ($allAttributes as $att => $vls) {
 
-            if ($att === 'data') {
-                $this->_dataAttributes[] = $vls;
+            if ($this->checkForData($att)) {
+
+                if (strpos($att, 'data-') === 0) {
+                    $this->_dataAttributes[] = [str_replace('data-', '', $att) => $vls];
+                } else {
+                    $this->_dataAttributes[] = $vls;
+                }
+
             } else {
+
                 if ($this->isValidAttribute($att)) {
                     $this->_attributes[$att] = $vls;
                 }
+
             }
 
         }

@@ -59,7 +59,7 @@ class HTMLElementTest extends PHPUnit_Framework_TestCase
 
         $this->assertFalse($this->validEl->hasErrors());
 
-        $this->validEl->setAttribute('blanket', '');
+        $this->validEl->setAttribute('blanket', 'klink');
 
         $this->assertTrue($this->validEl->hasErrors());
 
@@ -70,6 +70,35 @@ class HTMLElementTest extends PHPUnit_Framework_TestCase
         $this->validEl->setAttribute('class', array('classOne'));
 
         $this->assertEquals(array('class' => array('classOne')), $this->validEl->getAttributes());
+    }
+
+    public function testCanSetArrayOfDataAttributes()
+    {
+
+        $content = 'This is some content';
+
+        $expected = "<div data-test='testValue' data-testTwo='testValueTwo'>$content</div>";
+
+        $this->validEl->setContent($content);
+
+        $this->validEl->setAttribute('data', ['test' => 'testValue', 'testTwo' => 'testValueTwo']);
+
+        $this->assertEquals($expected, $this->validEl->getNode());
+
+    }
+
+    public function testReturnsContentWhenSet()
+    {
+        $content = 'This is some test content.';
+
+        $this->validEl->setContent($content);
+
+        $this->assertEquals($content, $this->validEl->getContent());
+    }
+
+    public function testReturnsFalseWhitoutContent()
+    {
+        $this->assertFalse($this->validEl->getNode());
     }
 
     public function testReturnsAProperlyFormattedNode()
@@ -92,35 +121,6 @@ class HTMLElementTest extends PHPUnit_Framework_TestCase
                 ));
 
         $this->assertEquals($expected, $el->getNode());
-    }
-
-    public function testReturnsContentWhenSet()
-    {
-        $content = 'This is some test content.';
-
-        $this->validEl->setContent($content);
-
-        $this->assertEquals($content, $this->validEl->getContent());
-    }
-
-    public function testReturnsFalseWhitoutContent()
-    {
-        $this->assertFalse($this->validEl->getNode());
-    }
-
-    public function testShouldBeAbleToSetArrayOfDataAttributes()
-    {
-
-        $content = 'This is some content';
-
-        $expected = "<div data-test='testValue' data-testTwo='testValueTwo'>$content</div>";
-
-        $this->validEl->setContent($content);
-
-        $this->validEl->setAttribute('data', ['test' => 'testValue', 'testTwo' => 'testValueTwo']);
-
-        $this->assertEquals($expected, $this->validEl->getNode());
-
     }
 
 }

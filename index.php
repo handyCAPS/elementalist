@@ -22,4 +22,23 @@ $Element->setAttribute(['class' => 'classOne','data' => ['test' => 'testValue']]
 $ma = $Element->getNode();
 
 
-$Element->echoPre($Element);
+$el = new \lib\HTMLElement('div');
+
+        $content = 'This is some content';
+
+        $expected = "<div id='divOne' class='classOne classTwo' data-category='sports'>" . $content . "</div>";;
+
+        $el->setContent($content);
+
+        $el->setAttribute(array(
+                'id' => 'divOne',
+                'class' => array(
+                    'classOne',
+                    'classTwo'
+                    ),
+                'data-category' => 'sports'
+                ));
+
+
+
+$Element->echoPre($el);
