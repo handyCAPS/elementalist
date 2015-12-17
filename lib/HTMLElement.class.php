@@ -153,6 +153,17 @@ class HTMLElement
     }
 
     /**
+     * Throws exception with errors as param
+     * 
+     * @return void 
+     * @throws InvalidElementException
+     */
+    private function throwException()
+    {
+        throw new InvalidElementException($this->getErrors());
+    }
+
+    /**
      * Add error to error array
      *
      * @param string $error Error message
@@ -187,6 +198,8 @@ class HTMLElement
     /**
      * Set valid elements and attributes in memory
      *
+     * @codeCoverageIgnore
+     *
      */
     private function setUp()
     {
@@ -204,7 +217,7 @@ class HTMLElement
             $this->selfClosingTags  = $htmlelements['selfclosingtags'];
         } else {
             $this->setError('No html json file was found at ' . self::$htmlJsonLocation);
-            throw new InvalidElementException($this->getErrors());
+            $this->throwException();
         }
     }
 
@@ -548,7 +561,7 @@ class HTMLElement
             return $this->_node;
 
         } else {
-            throw new InvalidElementException($this->getErrors());
+            $this->throwException();
         }
     }
 
