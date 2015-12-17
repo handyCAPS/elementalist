@@ -1,5 +1,14 @@
 <?php
+/**
+ * Autoloader
+ *
+ */
 
+/**
+ * Autoloader
+ * @param  string $className Class being intiated
+ * @return void
+ */
 function class_autoloader($className)
 {
 
@@ -14,8 +23,6 @@ function class_autoloader($className)
 
         require_once $fileName;
     }
-
-    require_once 'vendor/autoload.php';
 
 }
 

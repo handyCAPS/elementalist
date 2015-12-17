@@ -11,7 +11,7 @@
 
 <?php
 
-require_once 'lib/HTMLElement.class.php';
+require_once 'lib/autoload.php';
 
 $Element = new \lib\HTMLElement('input');
 

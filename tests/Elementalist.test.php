@@ -1,6 +1,8 @@
 <?php
 
-class HTMLElementTest extends PHPUnit_Framework_TestCase
+namespace lib;
+
+class HTMLElementTest extends \PHPUnit_Framework_TestCase
 {
 
     private $validEl;
@@ -11,15 +13,15 @@ class HTMLElementTest extends PHPUnit_Framework_TestCase
 
     private $inValidElString = 'basket';
 
-
+    private $testContent = 'This is some content';
 
 
     protected function setUp()
     {
 
-        $this->validEl = new \lib\HTMLElement($this->validElString);
+        $this->validEl = new HTMLElement($this->validElString);
 
-        $this->inValidEl = new \lib\HTMLElement($this->inValidElString);
+        $this->inValidEl = new HTMLElement($this->inValidElString);
 
     }
 
@@ -27,17 +29,6 @@ class HTMLElementTest extends PHPUnit_Framework_TestCase
     {
         unset($this->validEl);
         unset($this->inValidEl);
-    }
-
-    public function testReturnsNodeTypeSetInConstructorOrWithMethod()
-    {
-        $this->assertEquals($this->validElString, $this->validEl->getNodeType());
-
-        $el = new \lib\HTMLElement();
-
-        $el->setNodeType('input');
-
-        $this->assertEquals('input', $el->getNodeType());
     }
 
     public function testReturnsErrors()
@@ -52,50 +43,118 @@ class HTMLElementTest extends PHPUnit_Framework_TestCase
         $this->assertNotEmpty($this->inValidEl->getErrors());
     }
 
+    public function testThrowsExceptionIfNoNodetypeHasBeenSet()
+    {
+        $el = new HTMLElement();
+
+        $el->setContent($this->testContent);
+
+        $this->setExpectedException('\lib\InvalidElementException');
+
+        $el->getNode();
+    }
+
     public function testOnlyAcceptsValidElements()
     {
-        $this->assertTrue($this->validEl->isValidElement());
+        $this->setExpectedException('\lib\InvalidElementException');
 
-        $this->assertFalse($this->inValidEl->isValidElement());
+        $el = new HTMLElement();
 
-        $invalEl = new \lib\HTMLElement();
+        $el->setNodeType($this->inValidElString);
 
-        $invalEl->setNodeType($this->inValidElString);
+        $el->setContent($this->testContent);
 
-        $this->assertFalse($invalEl->isValidElement());
+        $el->getNode();
     }
 
     public function testOnlyAcceptsValidAttributes()
     {
+        $expected = "<div class='classOne' data-category='sport'>$this->testContent</div>";
+
+        $this->validEl->setContent($this->testContent);
+
         $this->validEl->setAttribute('class', 'classOne');
 
+        $this->validEl->setAttribute(['data' => ["category" => "sport"]]);
+
         $this->assertFalse($this->validEl->hasErrors());
+
+        $this->assertEquals($expected, $this->validEl->getNode());
 
         $this->validEl->setAttribute('blanket', 'klink');
 
         $this->assertTrue($this->validEl->hasErrors());
 
+        $this->setExpectedException('\lib\InvalidElementException');
+
+        $this->validEl->getNode();
+
+    }
+
+    public function testSetsAnyDataAttribute()
+    {
+        $expected = "<div data-test='testOne' data-testother='testOther'>$this->testContent</div>";
+
+        $this->validEl->setContent($this->testContent);
+
+        $this->validEl->setAttribute([
+            'data' => [
+                        'test' => 'testOne',
+                        'testOther' => 'testOther'
+                        ]
+                    ]);
+
+        $this->assertEquals($expected, $this->validEl->getNode());
+
     }
 
     public function testOnlyAcceptsValidInputTypes()
     {
-        $el = new \lib\HTMLElement('input');
+        $el = new HTMLElement('input');
 
         $el->setInputType('blanket');
 
         $this->assertTrue($el->hasErrors());
     }
 
+    public function testOnlyAcceptsAttributesValidForInputType()
+    {
+        $expected = "<input type='number' min='0' class='input-number'>";
+
+        $inputEl = new HTMLElement('input');
+
+        $inputEl->setInputType('number');
+
+        $inputEl->setAttribute([
+            'min' => '0',
+            'class' => 'input-number'
+            ]);
+
+        $this->assertFalse($inputEl->hasErrors());
+
+        $this->assertEquals($expected, $inputEl->getNode());
+
+        $inputEl->setAttribute('formaction', 'form');
+
+        $this->assertTrue($inputEl->hasErrors());
+    }
+
     public function testCanSetVariousAttributes()
     {
-        $this->validEl->setAttribute('class', array('classOne'));
+        $expected = "<div id='idOne' class='classOne classTwo'>$this->testContent</div>";
 
-        $this->assertEquals(array('class' => array('classOne')), $this->validEl->getAttributes());
+        $this->validEl->setAttribute('id', 'idOne');
+
+        $this->validEl->setAttribute('class', array('classOne', 'classTwo'));
+
+        $this->validEl->setContent($this->testContent);
+
+        $this->assertEquals($expected, $this->validEl->getNode());
     }
 
     public function testOnlyAcceptsAttributesBelongingToInput()
     {
-        $el = new \lib\HTMLElement();
+        $el = new HTMLElement();
 
         $el->setNodeType('input');
 
@@ -113,11 +172,9 @@ class HTMLElementTest extends PHPUnit_Framework_TestCase
     public function testCanSetArrayOfDataAttributes()
     {
 
-        $content = 'This is some content';
+        $expected = "<div data-test='testValue testValueArray' data-testtwo='testValueTwo'>$this->testContent</div>";
 
-        $expected = "<div data-test='testValue testValueArray' data-testTwo='testValueTwo'>$content</div>";
-
-        $this->validEl->setContent($content);
+        $this->validEl->setContent($this->testContent);
 
         $this->validEl->setAttribute('data', ['test' => ['testValue', 'testValueArray'], 'testTwo' => 'testValueTwo']);
 
@@ -127,40 +184,42 @@ class HTMLElementTest extends PHPUnit_Framework_TestCase
 
     public function testReturnsContentWhenSet()
     {
-        $content = 'This is some test content.';
+        $this->validEl->setContent($this->testContent);
 
-        $this->validEl->setContent($content);
-
-        $this->assertEquals($content, $this->validEl->getContent());
+        $this->assertEquals($this->testContent, $this->validEl->getContent());
     }
 
     public function testHasNoContentForSelfClosingTags()
     {
-        $el = new \lib\HTMLElement('input');
+        $el = new HTMLElement('input');
 
-        $el->setContent('This is some content');
+        $el->setContent($this->testContent);
 
         $this->assertEmpty($el->getContent());
     }
 
-    public function testReturnsFalseWithoutContentWhenNeeded()
+    public function testThrowsExceptionWithoutContentWhenNeeded()
     {
-        $this->assertFalse($this->validEl->getNode());
+        $this->setExpectedException('\lib\InvalidElementException');
+        $this->validEl->getNode();
+    }
 
-        $el = new \lib\HTMLElement('br');
+    public function testCantSetAttributesForInputBeforeTypeHasBeenSet()
+    {
+        $el = new HTMLElement('input');
 
-        $this->assertTrue($el->getNode() !== false);
+        $el->setAttribute('class', 'testClass');
+
+        $this->assertTrue($el->hasErrors());
     }
 
     public function testReturnsAProperlyFormattedNode()
     {
-        $el = new \lib\HTMLElement('div');
+        $el = new HTMLElement('div');
 
-        $content = 'This is some content';
+        $expected = "<div id='divOne' class='classOne classTwo' data-category='sports'>" . $this->testContent . "</div>";;
 
-        $expected = "<div id='divOne' class='classOne classTwo' data-category='sports'>" . $content . "</div>";;
-
-        $el->setContent($content);
+        $el->setContent($this->testContent);
 
         $el->setAttribute(array(
                 'id' => 'divOne',
@@ -173,7 +232,7 @@ class HTMLElementTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $el->getNode());
 
-        $br = new \lib\HTMLElement('br');
+        $br = new HTMLElement('br');
 
         $this->assertEquals("<br>", $br->getNode());
     }
