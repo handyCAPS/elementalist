@@ -15,6 +15,14 @@ namespace lib;
 class HTMLElement
 {
     /**
+     * Location of the json file with the html elements
+     *
+     * @todo Make it relative to file
+     * @var string
+     */
+    private static $htmlJsonLocation = 'json/htmlelements.json';
+
+    /**
      * The fully formed string representing a valid html node
      *
      * @var string
@@ -182,17 +190,22 @@ class HTMLElement
      */
     private function setUp()
     {
-        $htmlelements = json_decode(file_get_contents(__DIR__ . '/../htmlelements.json'), true);
+        if (file_exists(self::$htmlJsonLocation)) {
+            $htmlelements = json_decode(file_get_contents(self::$htmlJsonLocation), true);
 
-        $this->validElements    = array_keys($htmlelements['elements']);
+            $this->validElements    = array_keys($htmlelements['elements']);
 
-        $this->validAttributes  = $htmlelements['elements'];
+            $this->validAttributes  = $htmlelements['elements'];
 
-        $this->globalAttributes = $htmlelements['globalattributes'];
+            $this->globalAttributes = $htmlelements['globalattributes'];
 
-        $this->inputTypes       = $htmlelements['inputtypes'];
+            $this->inputTypes       = $htmlelements['inputtypes'];
 
-        $this->selfClosingTags  = $htmlelements['selfclosingtags'];
+            $this->selfClosingTags  = $htmlelements['selfclosingtags'];
+        } else {
+            $this->setError('No html json file was found at ' . self::$htmlJsonLocation);
+            throw new InvalidElementException($this->getErrors());
+        }
     }
 
     /**
