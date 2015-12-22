@@ -431,32 +431,32 @@ class HTMLElement
      * Set or add attribute
      *
      * @api
-     * @param string|array $attribute attribute to add
-     * @param array|string $values    Array of values to set for the attribute
+     * @param string|array $attribute Attribute to add
+     * @param array|string $values    Value or array of values to set for the attribute
      */
-    public function setAttribute($attribute, $values = array())
+    public function setAttribute($attribute, $values = null)
     {
         $this->checkIfNodetypeIsSet();
 
         $this->checkIfInputShouldBeSet();
 
-        $allAttributes = array();
-
-        // Attributes can be an array, if so, merge with others
-        if (is_array($attribute)) {
-            foreach ($attribute as $att => $vals) {
-                if (is_numeric($att) && is_string($vals)) {
-                    $allAttributes[$vals] = $vals;
-                } else {
-                    $allAttributes[$att] = $vals;
-                }
-            }
-        } else {
-            $allAttributes[$attribute] = $values;
+        if (!is_null($values)) {
+            // If $values is not null, only a single attribute is being set.
+            return $this->addAttribute($attribute, $this->valueToArray($values));
+        }
+        // If $attribute is a string and $values is null, its a flag attribute (required, disabled, readonly)
+        if (is_string($attribute)) {
+            return $this->setFlagAttribute($attribute);
         }
 
+        // At this point $attribute is an array and $values is null
+        // possible: string => string,
+        //           string => array,
+        //           array => null
+        
+
         // Loop over all attributes
-        foreach ($allAttributes as $att => $vls) {
+        foreach ($attribute as $att => $vls) {
 
             if ($this->checkForData($att)) {
 
@@ -464,20 +464,55 @@ class HTMLElement
                 if (strpos($att, 'data-') === 0) {
                     $this->_dataAttributes[] = [str_replace('data-', '', $att) => $vls];
                 } else {
-                    $this->_dataAttributes[] = $vls;
+                    $this->_dataAttributes[$att] = $vls;
                 }
 
             } else {
 
                 // Only set valid attributes
                 if ($this->isValidAttribute($att)) {
-                    $this->_attributes[$att] = $vls;
+                    // $this->_attributes[$att] = $vls;
+                    $this->addAttribute($att, $this->valueToArray($vls));
                 }
 
             }
 
         }
 
+    }
+
+    private function filterAttributes($attributes, $values)
+    {
+
+    }
+
+    private function setFlagAttribute($attribute)
+    {
+        $this->addAttribute($attribute, $attribute);
+    }
+
+    private function addDataAttribute($type, Array $values)
+    {
+        $this->addAttribute('data-' . $type, $values);
+    }
+
+    private function valueToArray($values)
+    {
+        if (is_array($values)) { return $values; }
+
+        return explode(' ', $values);
+    }
+
+    private function addAttribute($attribute, Array $values)
+    {
+        if ($this->isValidAttribute($attribute)) {
+
+            if (!in_array($attribute, $this->_attributes)) {
+                $this->_attributes[$attribute] = [];
+            }
+
+            $this->_attributes[$attribute] = $values;
+        }
     }
 
     /**
@@ -515,7 +550,7 @@ class HTMLElement
 
         foreach ($this->_dataAttributes as $data) {
             foreach ($data as $type => $value) {
-                $dataAtts['data-' . $type] = $value;
+                $dataAtts['data-' . $type] = $this->valueToArray($value);
             }
         }
 
@@ -585,6 +620,15 @@ class HTMLElement
         $this->buildNode();
 
         return $this->_node;
+    }
+
+    public function __call($name, $arguments)
+    {
+        if (strpos($name, 'set') !== 0) { return false; }
+
+        $att = strtolower(str_replace('set', '', $name));
+
+        return $this->setAttribute($att, $arguments);
     }
 
 }

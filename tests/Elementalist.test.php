@@ -269,4 +269,17 @@ class HTMLElementTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $anchor->getNode());
     }
 
+    public function testCanSetMultipleValuesForSameAttribute()
+    {
+        $expected = "<h1 class='one two'>";
+
+        $el = new HTMLElement;
+        $el->setNodeType('h1');
+
+        $el->setClass('one');
+        $el->setAttribute('class','two');
+
+        $this->assertEquals($expected, $el->getNode());
+    }
+
 }

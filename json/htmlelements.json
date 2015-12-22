@@ -496,7 +496,22 @@
             ]
         },
         "button": {
-            "attributes": []
+            "attributes": [
+                "autofocus",
+                "autocomplete",
+                "autosave",
+                "disabled",
+                "form",
+                "formaction",
+                "formenctype",
+                "formmethod",
+                "formnovalidate",
+                "formtarget",
+                "name",
+                "type",
+                "value",
+                "disabled"
+            ]
         },
         "select": {
             "attributes": [
@@ -972,11 +987,11 @@
     },
     "globalattributes": [
         "accesskey",
-        "aria-*",
+        "aria",
         "class",
         "contenteditable",
         "contextmenu",
-        "data-*",
+        "data",
         "dir",
         "draggable",
         "dropzone",
@@ -991,6 +1006,7 @@
         "role",
         "spellcheck",
         "tabindex",
+        "title",
         "translate"
     ],
     "selfclosingtags": [
