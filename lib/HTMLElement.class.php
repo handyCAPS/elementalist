@@ -155,6 +155,17 @@ class HTMLElement
     }
 
     /**
+     * Throws exception with errors as param
+     *
+     * @return void
+     * @throws InvalidElementException
+     */
+    private function throwException()
+    {
+        throw new InvalidElementException($this->getErrors());
+    }
+
+    /**
      * Add error to error array
      *
      * @param string $error Error message
@@ -187,17 +198,6 @@ class HTMLElement
     }
 
     /**
-     * Throw a standardized exception
-     *
-     * @return void
-     * @throws InvalidArgumentException
-     */
-    private function throwException()
-    {
-        throw new InvalidElementException($this->getErrors());
-    }
-
-    /**
      * Check if the json file with the elements is available
      *
      * @throws InvalidElementException
@@ -216,6 +216,8 @@ class HTMLElement
     /**
      * Set valid elements and attributes in memory
      *
+     * @codeCoverageIgnore
+     *
      */
     private function setUp()
     {
@@ -232,6 +234,7 @@ class HTMLElement
         $this->inputTypes       = $htmlelements['inputtypes'];
 
         $this->selfClosingTags  = $htmlelements['selfclosingtags'];
+
     }
 
     /**

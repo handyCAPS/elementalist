@@ -6,5 +6,9 @@
         "phpmd/phpmd" : "@stable",
         "pdepend/pdepend" : "2.2.2"
     },
-    "require": {}
+    "require": {
+            "phpunit/phpunit": "4.*",
+            "phpdocumentor/phpdocumentor": "2.*",
+            "halleck45/phpmetrics": "*"
+        }
 }
