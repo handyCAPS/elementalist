@@ -20,7 +20,7 @@ class HTMLElement
      * @todo Make it relative to file
      * @var string
      */
-    private static $htmlJsonLocation = 'json/htmlelements.json';
+    private $htmlJsonLocation;
 
     /**
      * The fully formed string representing a valid html node
@@ -143,6 +143,8 @@ class HTMLElement
     public function __construct($nodeType = null)
     {
 
+        $this->htmlJsonLocation = 'json/htmlelements.json';
+
         $this->setUp();
 
         if (!is_null($nodeType)) {
@@ -185,48 +187,66 @@ class HTMLElement
     }
 
     /**
+     * Throw a standardized exception
+     *
+     * @return void
+     * @throws InvalidArgumentException
+     */
+    private function throwException()
+    {
+        throw new InvalidElementException($this->getErrors());
+    }
+
+    /**
+     * Check if the json file with the elements is available
+     *
+     * @throws InvalidElementException
+     * @return void
+     *
+     * @codeCoverageIgnore
+     */
+    private function checkJsonFile()
+    {
+        if (!file_exists($this->htmlJsonLocation)) {
+            $this->setError('No html json file was found at location ' . $this->htmlJsonLocation);
+            $this->throwException();
+        }
+    }
+
+    /**
      * Set valid elements and attributes in memory
      *
      */
     private function setUp()
     {
-        if (file_exists(self::$htmlJsonLocation)) {
-            $htmlelements = json_decode(file_get_contents(self::$htmlJsonLocation), true);
+        $this->checkJsonFile();
 
-            $this->validElements    = array_keys($htmlelements['elements']);
+        $htmlelements = json_decode(file_get_contents($this->htmlJsonLocation), true);
 
-            $this->validAttributes  = $htmlelements['elements'];
+        $this->validElements    = array_keys($htmlelements['elements']);
 
-            $this->globalAttributes = $htmlelements['globalattributes'];
+        $this->validAttributes  = $htmlelements['elements'];
 
-            $this->inputTypes       = $htmlelements['inputtypes'];
+        $this->globalAttributes = $htmlelements['globalattributes'];
 
-            $this->selfClosingTags  = $htmlelements['selfclosingtags'];
-        } else {
-            $this->setError('No html json file was found at ' . self::$htmlJsonLocation);
-            throw new InvalidElementException($this->getErrors());
-        }
+        $this->inputTypes       = $htmlelements['inputtypes'];
+
+        $this->selfClosingTags  = $htmlelements['selfclosingtags'];
     }
 
     /**
      * Checks required elements of the node
      *
-     * @return boolean Are there any errors ?
+     * @return void
      */
     private function finalCheck()
     {
-
         if (empty($this->_nodeType)) {
             $this->setError('No nodetype has been defined');
         }
-
-        if (!$this->isSelfClosing) {
-            if (empty($this->_content)) {
-                $this->setError('No content has been set.');
-            }
+        if ($this->hasErrors()) {
+            $this->throwException();
         }
-
-        return !$this->hasErrors();
     }
 
     /**
@@ -373,7 +393,7 @@ class HTMLElement
                 $res = true;
             }
         } else {
-            if (!in_array($attribute, $this->globalAttributes) && !in_array($attribute, $this->validAttributes[$this->_nodeType])) {
+            if (!in_array($attribute, $this->globalAttributes) && !in_array($attribute, $this->validAttributes[$this->_nodeType]['attributes'])) {
 
                 $this->setError('Invalid attribute ' . $attribute . ' for ' . $this->_nodeType . '.');
                 $res = false;
@@ -386,6 +406,24 @@ class HTMLElement
         return $res;
     }
 
+    private function checkIfNodetypeIsSet()
+    {
+        if (empty($this->_nodeType)) {
+            $this->setError('Trying to set attribute before nodetype is set.');
+            $this->throwException();
+        }
+    }
+
+    private function checkIfInputShouldBeSet()
+    {
+        if ($this->isInput && empty($this->_inputType)) {
+
+            $this->setError('Trying to set input attributes before input type.');
+
+            $this->throwException();
+        }
+    }
+
     /**
      * Set or add attribute
      *
@@ -395,21 +433,20 @@ class HTMLElement
      */
     public function setAttribute($attribute, $values = array())
     {
+        $this->checkIfNodetypeIsSet();
+
+        $this->checkIfInputShouldBeSet();
+
         $allAttributes = array();
-
-        // Inputs need a type before any attributes can be set
-        if ($this->isInput && empty($this->_inputType)) {
-
-            $this->setError('Trying to set input attributes before input type.');
-
-            return false;
-
-        }
 
         // Attributes can be an array, if so, merge with others
         if (is_array($attribute)) {
             foreach ($attribute as $att => $vals) {
+                if (is_numeric($att) && is_string($vals)) {
+                    $allAttributes[$vals] = $vals;
+                } else {
                     $allAttributes[$att] = $vals;
+                }
             }
         } else {
             $allAttributes[$attribute] = $values;
@@ -473,7 +510,7 @@ class HTMLElement
     {
         $dataAtts = array();
 
-        foreach ($this->_dataAttributes as $key => $data) {
+        foreach ($this->_dataAttributes as $data) {
             foreach ($data as $type => $value) {
                 $dataAtts['data-' . $type] = $value;
             }
@@ -538,18 +575,13 @@ class HTMLElement
      */
     public function getNode()
     {
+        $this->finalCheck();
 
-        if ($this->finalCheck()) {
+        $this->buildOpenTag();
 
-            $this->buildOpenTag();
+        $this->buildNode();
 
-            $this->buildNode();
-
-            return $this->_node;
-
-        } else {
-            throw new InvalidElementException($this->getErrors());
-        }
+        return $this->_node;
     }
 
 }

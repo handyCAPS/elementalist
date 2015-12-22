@@ -182,6 +182,16 @@ class HTMLElementTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    public function testCanSetArrayOfEmptyAttributes()
+    {
+        $expected = "<input type='checkbox' disabled='disabled' required='required' checked='checked'>";
+        $input = new HTMLElement('input');
+        $input->setInputType('checkbox');
+        $input->setAttribute(['disabled','required','checked']);
+
+        $this->assertEquals($expected, $input->getNode());
+    }
+
     public function testReturnsContentWhenSet()
     {
         $this->validEl->setContent($this->testContent);
@@ -198,15 +208,23 @@ class HTMLElementTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($el->getContent());
     }
 
-    public function testThrowsExceptionWithoutContentWhenNeeded()
+    public function cantSetAttributeBeforeNodetypeHasBeenSet()
     {
+        $el = new HTMLElement();
+
         $this->setExpectedException('\lib\InvalidElementException');
-        $this->validEl->getNode();
+
+        $el->setAttribute('class', 'classOne');
+
+        $this->assertTrue($el->hasErrors());
     }
+
 
     public function testCantSetAttributesForInputBeforeTypeHasBeenSet()
     {
         $el = new HTMLElement('input');
+
+        $this->setExpectedException('\lib\InvalidElementException');
 
         $el->setAttribute('class', 'testClass');
 
@@ -235,6 +253,20 @@ class HTMLElementTest extends \PHPUnit_Framework_TestCase
         $br = new HTMLElement('br');
 
         $this->assertEquals("<br>", $br->getNode());
+    }
+
+    public function testCanSetAnotherElementAsContent()
+    {
+        $expected = "<a href='test'><i class='icon'></i></a>";
+
+        $icon = new HTMLElement('i');
+        $icon->setAttribute('class', 'icon');
+
+        $anchor = new HTMLElement('a');
+        $anchor->setAttribute('href', 'test');
+        $anchor->setContent($icon->getNode());
+
+        $this->assertEquals($expected, $anchor->getNode());
     }
 
 }

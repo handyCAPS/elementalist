@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "44c5e0774636cf726046e91f9206389d",
-    "content-hash": "cbe1eeef5253a0cd6b06058422d65df5",
+    "hash": "6d68533be2048bb4e7db281c64bc84af",
+    "content-hash": "7ecb30bd5813f681c50fa6389c1bdb60",
     "packages": [],
     "packages-dev": [
         {
@@ -873,6 +873,46 @@
             "time": "2014-07-23 18:24:17"
         },
         {
+            "name": "pdepend/pdepend",
+            "version": "2.2.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pdepend/pdepend.git",
+                "reference": "d3ae0d084d526cdc6c3f1b858fb7148de77b41c5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pdepend/pdepend/zipball/d3ae0d084d526cdc6c3f1b858fb7148de77b41c5",
+                "reference": "d3ae0d084d526cdc6c3f1b858fb7148de77b41c5",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.7",
+                "symfony/config": "^2.3.0",
+                "symfony/dependency-injection": "^2.3.0",
+                "symfony/filesystem": "^2.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.0.0,<4.8",
+                "squizlabs/php_codesniffer": "^2.0.0"
+            },
+            "bin": [
+                "src/bin/pdepend"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "PDepend\\": "src/main/php/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Official version of pdepend to be handled with Composer",
+            "time": "2015-10-16 08:49:58"
+        },
+        {
             "name": "phpcollection/phpcollection",
             "version": "0.4.0",
             "source": {
@@ -1197,6 +1237,124 @@
                 }
             ],
             "time": "2015-02-03 12:10:50"
+        },
+        {
+            "name": "phploc/phploc",
+            "version": "2.1.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sebastianbergmann/phploc.git",
+                "reference": "50e063abd41833b3a5d29a2e8fbef5859ac28bdc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sebastianbergmann/phploc/zipball/50e063abd41833b3a5d29a2e8fbef5859ac28bdc",
+                "reference": "50e063abd41833b3a5d29a2e8fbef5859ac28bdc",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3",
+                "sebastian/finder-facade": "~1.1",
+                "sebastian/git": "~2.0",
+                "sebastian/version": "~1.0.3",
+                "symfony/console": "~2.5"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4"
+            },
+            "bin": [
+                "phploc"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.1-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Sebastian Bergmann",
+                    "email": "sebastian@phpunit.de",
+                    "role": "lead"
+                }
+            ],
+            "description": "A tool for quickly measuring the size of a PHP project.",
+            "homepage": "https://github.com/sebastianbergmann/phploc",
+            "time": "2015-10-22 13:44:19"
+        },
+        {
+            "name": "phpmd/phpmd",
+            "version": "2.3.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpmd/phpmd.git",
+                "reference": "08b5bcd454a7148579b68931fc500d824afd3bb5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpmd/phpmd/zipball/08b5bcd454a7148579b68931fc500d824afd3bb5",
+                "reference": "08b5bcd454a7148579b68931fc500d824afd3bb5",
+                "shasum": ""
+            },
+            "require": {
+                "pdepend/pdepend": "~2.0",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.0",
+                "squizlabs/php_codesniffer": "^2.0"
+            },
+            "bin": [
+                "src/bin/phpmd"
+            ],
+            "type": "project",
+            "autoload": {
+                "psr-0": {
+                    "PHPMD\\": "src/main/php"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Manuel Pichler",
+                    "email": "github@manuel-pichler.de",
+                    "homepage": "https://github.com/manuelpichler",
+                    "role": "Project Founder"
+                },
+                {
+                    "name": "Other contributors",
+                    "homepage": "https://github.com/phpmd/phpmd/graphs/contributors",
+                    "role": "Contributors"
+                },
+                {
+                    "name": "Marc Würth",
+                    "email": "ravage@bluewin.ch",
+                    "homepage": "https://github.com/ravage84",
+                    "role": "Project Maintainer"
+                }
+            ],
+            "description": "PHPMD is a spin-off project of PHP Depend and aims to be a PHP equivalent of the well known Java tool PMD.",
+            "homepage": "http://phpmd.org/",
+            "keywords": [
+                "mess detection",
+                "mess detector",
+                "pdepend",
+                "phpmd",
+                "pmd"
+            ],
+            "time": "2015-09-24 14:37:49"
         },
         {
             "name": "phpoption/phpoption",
@@ -1993,6 +2151,90 @@
             "time": "2015-06-21 07:55:53"
         },
         {
+            "name": "sebastian/finder-facade",
+            "version": "1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sebastianbergmann/finder-facade.git",
+                "reference": "a520dcc3dd39160eea480daa3426f4fd419a327b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sebastianbergmann/finder-facade/zipball/a520dcc3dd39160eea480daa3426f4fd419a327b",
+                "reference": "a520dcc3dd39160eea480daa3426f4fd419a327b",
+                "shasum": ""
+            },
+            "require": {
+                "symfony/finder": "~2.3",
+                "theseer/fdomdocument": "~1.3"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Sebastian Bergmann",
+                    "email": "sebastian@phpunit.de",
+                    "role": "lead"
+                }
+            ],
+            "description": "FinderFacade is a convenience wrapper for Symfony's Finder component.",
+            "homepage": "https://github.com/sebastianbergmann/finder-facade",
+            "time": "2015-06-04 08:11:58"
+        },
+        {
+            "name": "sebastian/git",
+            "version": "2.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sebastianbergmann/git.git",
+                "reference": "2d5c139d0eedcb9e67e0e9ca08023be6e9b7b47b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sebastianbergmann/git/zipball/2d5c139d0eedcb9e67e0e9ca08023be6e9b7b47b",
+                "reference": "2d5c139d0eedcb9e67e0e9ca08023be6e9b7b47b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Sebastian Bergmann",
+                    "email": "sebastian@phpunit.de"
+                }
+            ],
+            "description": "Simple wrapper for Git",
+            "homepage": "http://www.github.com/sebastianbergmann/git",
+            "keywords": [
+                "git"
+            ],
+            "time": "2015-04-06 16:23:43"
+        },
+        {
             "name": "sebastian/global-state",
             "version": "1.1.1",
             "source": {
@@ -2288,6 +2530,68 @@
             "time": "2015-11-30 12:35:10"
         },
         {
+            "name": "symfony/dependency-injection",
+            "version": "v2.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/dependency-injection.git",
+                "reference": "1ac8ce1a1cff7ff9467d44bc71b0f71dfa751ba4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/dependency-injection/zipball/1ac8ce1a1cff7ff9467d44bc71b0f71dfa751ba4",
+                "reference": "1ac8ce1a1cff7ff9467d44bc71b0f71dfa751ba4",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.9"
+            },
+            "conflict": {
+                "symfony/expression-language": "<2.6"
+            },
+            "require-dev": {
+                "symfony/config": "~2.2|~3.0.0",
+                "symfony/expression-language": "~2.6|~3.0.0",
+                "symfony/yaml": "~2.1|~3.0.0"
+            },
+            "suggest": {
+                "symfony/config": "",
+                "symfony/proxy-manager-bridge": "Generate service proxies to lazy load them",
+                "symfony/yaml": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.8-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\DependencyInjection\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony DependencyInjection Component",
+            "homepage": "https://symfony.com",
+            "time": "2015-11-30 06:56:28"
+        },
+        {
             "name": "symfony/event-dispatcher",
             "version": "v2.8.0",
             "source": {
@@ -2349,25 +2653,25 @@
         },
         {
             "name": "symfony/filesystem",
-            "version": "v3.0.0",
+            "version": "v2.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "692d98d813e4ef314b9c22775c86ddbeb0f44884"
+                "reference": "3e661a0d521ac67496515fa6e6704bd61bcfff60"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/692d98d813e4ef314b9c22775c86ddbeb0f44884",
-                "reference": "692d98d813e4ef314b9c22775c86ddbeb0f44884",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/3e661a0d521ac67496515fa6e6704bd61bcfff60",
+                "reference": "3e661a0d521ac67496515fa6e6704bd61bcfff60",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.5.9"
+                "php": ">=5.3.9"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.0-dev"
+                    "dev-master": "2.8-dev"
                 }
             },
             "autoload": {
@@ -2394,7 +2698,7 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "https://symfony.com",
-            "time": "2015-11-23 10:41:47"
+            "time": "2015-11-23 10:19:46"
         },
         {
             "name": "symfony/finder",
@@ -2783,6 +3087,46 @@
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
             "time": "2015-11-30 12:36:17"
+        },
+        {
+            "name": "theseer/fdomdocument",
+            "version": "1.6.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/theseer/fDOMDocument.git",
+                "reference": "d9ad139d6c2e8edf5e313ffbe37ff13344cf0684"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/theseer/fDOMDocument/zipball/d9ad139d6c2e8edf5e313ffbe37ff13344cf0684",
+                "reference": "d9ad139d6c2e8edf5e313ffbe37ff13344cf0684",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "lib-libxml": "*",
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Arne Blankerts",
+                    "email": "arne@blankerts.de",
+                    "role": "lead"
+                }
+            ],
+            "description": "The classes contained within this repository extend the standard DOM to use exceptions at all occasions of errors instead of PHP warnings or notices. They also add various custom methods and shortcuts for convenience and to simplify the usage of DOM.",
+            "homepage": "https://github.com/theseer/fDOMDocument",
+            "time": "2015-05-27 22:58:02"
         },
         {
             "name": "twig/twig",
@@ -3245,20 +3589,20 @@
         },
         {
             "name": "zendframework/zend-math",
-            "version": "2.5.1",
+            "version": "2.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-math.git",
-                "reference": "9f02a1ac4d3374d3332c80f9215deec9c71558fc"
+                "reference": "2648ee3cce39aa3876788c837e3b58f198dc8a78"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-math/zipball/9f02a1ac4d3374d3332c80f9215deec9c71558fc",
-                "reference": "9f02a1ac4d3374d3332c80f9215deec9c71558fc",
+                "url": "https://api.github.com/repos/zendframework/zend-math/zipball/2648ee3cce39aa3876788c837e3b58f198dc8a78",
+                "reference": "2648ee3cce39aa3876788c837e3b58f198dc8a78",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.23"
+                "php": ">=5.5"
             },
             "require-dev": {
                 "fabpot/php-cs-fixer": "1.7.*",
@@ -3293,7 +3637,7 @@
                 "math",
                 "zf2"
             ],
-            "time": "2015-06-03 15:32:02"
+            "time": "2015-12-17 15:31:58"
         },
         {
             "name": "zendframework/zend-serializer",
@@ -3573,7 +3917,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "phpmd/phpmd": 0
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
