@@ -19,7 +19,12 @@ $Element->setContent('This is some content');
 
 $Element->setInputType('number');
 
-$Element->setAttribute(['class' => 'classOne','data' => ['test' => 'testValue'], 'class' => 'classTwo']);
+$Element->setAttribute(['class' => 'classOne']);
+
+$Element->setAttribute('data', [
+    'test' => ['testValue', 'testValueArray'],
+    'testTwo' => 'testValueTwo'
+    ]);
 
 $ma = $Element->getNode();
 

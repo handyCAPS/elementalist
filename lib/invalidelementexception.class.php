@@ -19,6 +19,6 @@ class InvalidElementException extends \Exception
      */
     public function __construct($errors = array())
     {
-        parent::__construct('Invalid HTMLElement. Errors: ' . implode(', ', $errors));
+        parent::__construct("Invalid HTMLElement. Errors:\n" . implode(",\n", $errors));
     }
 }

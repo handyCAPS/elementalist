@@ -271,15 +271,26 @@ class HTMLElementTest extends \PHPUnit_Framework_TestCase
 
     public function testCanSetMultipleValuesForSameAttribute()
     {
-        $expected = "<h1 class='one two'>";
+        $expected = "<h1 class='one two'>$this->testContent</h1>";
 
         $el = new HTMLElement;
         $el->setNodeType('h1');
+        $el->setContent($this->testContent);
 
-        $el->setClass('one');
+        $el->class = 'one';
         $el->setAttribute('class','two');
 
         $this->assertEquals($expected, $el->getNode());
+    }
+
+    public function testItCanSetAttributesByName()
+    {
+        $expected = "<nav class='classOne'></nav>";
+
+        $el = new HTMLElement('nav');
+        $el->class = 'classOne';
+
+        $this->assertEquals($expected, $el->getNode(), $el->getErrors());
     }
 
 }

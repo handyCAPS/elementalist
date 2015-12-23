@@ -258,7 +258,7 @@ class HTMLElement
      * @param  string $attribute attribute to check
      * @return boolean Is it a data attribute ?
      */
-    private function checkForData($attribute)
+    private function isDataAttribute($attribute)
     {
         $prefix = 'data';
 
@@ -388,6 +388,8 @@ class HTMLElement
     {
         $res = false;
 
+        if ($this->isDataAttribute($attribute)) { return true; }
+
         if ($this->isInput) {
             if (!$this->isValidInputAttribute($attribute)) {
                 $this->setError('Invalid attribute ' . $attribute . ' for ' . $this->_nodeType . ' type: ' . $this->_inputType . '.');
@@ -442,6 +444,9 @@ class HTMLElement
 
         if (!is_null($values)) {
             // If $values is not null, only a single attribute is being set.
+            if ($this->isDataAttribute($attribute)) {
+                return $this->setDataAttribute($attribute, $values);
+            }
             return $this->addAttribute($attribute, $this->valueToArray($values));
         }
         // If $attribute is a string and $values is null, its a flag attribute (required, disabled, readonly)
@@ -452,48 +457,42 @@ class HTMLElement
         // At this point $attribute is an array and $values is null
         // possible: string => string,
         //           string => array,
-        //           array => null
-        
+        //           numeric array
+
 
         // Loop over all attributes
         foreach ($attribute as $att => $vls) {
-
-            if ($this->checkForData($att)) {
-
-                // Data attributes get split out to their own array
-                if (strpos($att, 'data-') === 0) {
-                    $this->_dataAttributes[] = [str_replace('data-', '', $att) => $vls];
-                } else {
-                    $this->_dataAttributes[$att] = $vls;
-                }
-
-            } else {
-
-                // Only set valid attributes
-                if ($this->isValidAttribute($att)) {
-                    // $this->_attributes[$att] = $vls;
-                    $this->addAttribute($att, $this->valueToArray($vls));
-                }
-
+            // If the key is numeric, its an array of flag attributes
+            if (is_numeric($att)) {
+                $this->setFlagAttribute($vls);
+                continue;
             }
-
+            if ($this->isDataAttribute($att)) {
+                $this->setDataAttribute($att, $vls);
+                continue;
+            }
+            $this->addAttribute($att, $this->valueToArray($vls));
         }
-
-    }
-
-    private function filterAttributes($attributes, $values)
-    {
 
     }
 
     private function setFlagAttribute($attribute)
     {
-        $this->addAttribute($attribute, $attribute);
+        $this->addAttribute($attribute, $this->valueToArray($attribute));
     }
 
-    private function addDataAttribute($type, Array $values)
+    private function setDataAttribute($type, $values)
     {
-        $this->addAttribute('data-' . $type, $values);
+        // $type can be:
+        // data-  single attribute, $values are values
+        // data   values is array of types
+        if ($type === 'data') {
+            foreach ($values as $dataType => $vls) {
+                $this->setDataAttribute($dataType, $vls);
+            }
+            return;
+        }
+        $this->addAttribute('data-' . str_replace('data-', '', $type), $this->valueToArray($values));
     }
 
     private function valueToArray($values)
@@ -507,11 +506,11 @@ class HTMLElement
     {
         if ($this->isValidAttribute($attribute)) {
 
-            if (!in_array($attribute, $this->_attributes)) {
+            if (!array_key_exists($attribute, $this->_attributes)) {
                 $this->_attributes[$attribute] = [];
             }
 
-            $this->_attributes[$attribute] = $values;
+            $this->_attributes[$attribute][] = implode(' ', $values);
         }
     }
 
@@ -540,24 +539,6 @@ class HTMLElement
     }
 
     /**
-     * Merge data attributes with the other attributes
-     *
-     * @return void
-     */
-    private function mergeDataAttributes()
-    {
-        $dataAtts = array();
-
-        foreach ($this->_dataAttributes as $data) {
-            foreach ($data as $type => $value) {
-                $dataAtts['data-' . $type] = $this->valueToArray($value);
-            }
-        }
-
-        $this->_attributes = array_merge($this->_attributes, $dataAtts);
-    }
-
-    /**
      * Get a string of formatted attributes and values
      *
      * @return string Formatted attribute string
@@ -570,7 +551,7 @@ class HTMLElement
         }
 
         foreach ($this->_attributes as $attribute => $values) {
-            $vals = is_array($values) ? implode(' ', $values) : $values;
+            $vals = implode(' ', $values);
             $attributes .= ' ' . strtolower($attribute) . "='" . $vals . "'";
         }
 
@@ -584,7 +565,7 @@ class HTMLElement
      */
     private function buildOpenTag()
     {
-        $this->mergeDataAttributes();
+        // $this->mergeDataAttributes();
 
         $nodeOpen = "<" . $this->_nodeType;
 
@@ -622,13 +603,11 @@ class HTMLElement
         return $this->_node;
     }
 
-    public function __call($name, $arguments)
+    public function __set($name, $value)
     {
-        if (strpos($name, 'set') !== 0) { return false; }
-
-        $att = strtolower(str_replace('set', '', $name));
-
-        return $this->setAttribute($att, $arguments);
+        if ($this->isValidAttribute($name)) {
+            $this->setAttribute($name, $value);
+        }
     }
 
 }
